@@ -1,0 +1,294 @@
+<title>Project Registry</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#FBF6F4; --surface:#FFFFFF; --surface-2:#F6ECEA;
+    --ink:#2B2230; --ink-soft:#6B5F6A; --line:#EADCD8;
+    --accent:#C43C77; --accent-ink:#8E2455; --accent-soft:#F6DAE7;
+    --ok:#2E9E6B;
+    --radius:16px; --shadow:0 1px 2px rgba(43,34,48,.06),0 12px 32px rgba(140,36,85,.08);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#17121B; --surface:#1F1926; --surface-2:#271F30;
+      --ink:#F3EAF0; --ink-soft:#B29FB0; --line:#342A3D;
+      --accent:#E86AA0; --accent-ink:#F2A9C9; --accent-soft:#37202F;
+      --ok:#5FCB97;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 40px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#17121B; --surface:#1F1926; --surface-2:#271F30;
+    --ink:#F3EAF0; --ink-soft:#B29FB0; --line:#342A3D;
+    --accent:#E86AA0; --accent-ink:#F2A9C9; --accent-soft:#37202F;
+    --ok:#5FCB97;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 40px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"DM Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1120px; margin:0 auto; padding:clamp(20px,4vw,44px) clamp(16px,4vw,32px) 64px}
+
+  header.masthead{margin-bottom:clamp(22px,3vw,34px)}
+  .eyebrow{
+    font-size:.72rem; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--accent-ink); font-weight:600; margin:0 0 10px;
+  }
+  h1{
+    font-family:"Fraunces",Georgia,serif; font-weight:600;
+    font-size:clamp(2rem,5.2vw,3rem); line-height:1.05; margin:0;
+    letter-spacing:-.01em; text-wrap:balance;
+  }
+  .lede{color:var(--ink-soft); max-width:60ch; margin:12px 0 0; font-size:1.02rem}
+
+  .grid{display:grid; gap:clamp(18px,2.5vw,28px); grid-template-columns:1fr}
+  @media (min-width:900px){ .grid{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); align-items:start} }
+
+  .card{
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+  }
+  form.card{padding:clamp(18px,2.4vw,26px)}
+  .field{display:flex; flex-direction:column; gap:7px; margin-bottom:18px}
+  .field:last-child{margin-bottom:0}
+  label{font-weight:600; font-size:.92rem; display:flex; align-items:baseline; gap:8px}
+  label .hint{font-weight:400; color:var(--ink-soft); font-size:.8rem}
+  input,textarea{
+    font:inherit; color:var(--ink); background:var(--surface-2);
+    border:1px solid var(--line); border-radius:10px; padding:11px 13px; width:100%;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  textarea{resize:vertical; min-height:96px; line-height:1.5}
+  input::placeholder,textarea::placeholder{color:var(--ink-soft); opacity:.7}
+  input:focus,textarea:focus{
+    outline:none; border-color:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media (max-width:520px){ .row2{grid-template-columns:1fr} }
+
+  /* Output panel */
+  .out{position:sticky; top:18px; display:flex; flex-direction:column; overflow:hidden}
+  .tabs{display:flex; gap:4px; padding:8px 8px 0; border-bottom:1px solid var(--line)}
+  .tab{
+    appearance:none; border:0; background:transparent; cursor:pointer;
+    font:600 .9rem/1 "DM Sans",sans-serif; color:var(--ink-soft);
+    padding:11px 14px; border-radius:10px 10px 0 0; position:relative;
+  }
+  .tab[aria-selected="true"]{color:var(--accent-ink); background:var(--surface-2)}
+  .tab[aria-selected="true"]::after{
+    content:""; position:absolute; left:12px; right:12px; bottom:-1px; height:2px;
+    background:var(--accent); border-radius:2px;
+  }
+  .panel{padding:16px}
+  .panel[hidden]{display:none}
+  .panel-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px}
+  .panel-head p{margin:0; color:var(--ink-soft); font-size:.85rem; max-width:44ch}
+  pre{
+    margin:0; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:12px; padding:15px; overflow-x:auto;
+    font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:.83rem; line-height:1.6; color:var(--ink);
+    white-space:pre-wrap; word-break:break-word; max-height:52vh; overflow-y:auto;
+  }
+  .copy{
+    appearance:none; cursor:pointer; white-space:nowrap;
+    font:600 .85rem/1 "DM Sans",sans-serif; color:#fff;
+    background:var(--accent); border:1px solid transparent; border-radius:10px;
+    padding:10px 16px; transition:transform .08s ease, filter .15s ease;
+  }
+  .copy:hover{filter:brightness(1.05)}
+  .copy:active{transform:translateY(1px)}
+  .copy.done{background:var(--ok)}
+  .copy:focus-visible,.tab:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .note{
+    margin-top:26px; padding:16px 18px; border:1px dashed var(--line);
+    border-radius:12px; background:var(--surface); color:var(--ink-soft); font-size:.9rem;
+  }
+  .note b{color:var(--ink)}
+  .note code{
+    font-family:"JetBrains Mono",monospace; font-size:.85em;
+    background:var(--surface-2); padding:1px 6px; border-radius:6px; color:var(--accent-ink);
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">Project Registry</p>
+    <h1>Log a project, get its card</h1>
+    <p class="lede">Fill this in from any device. It builds a ready-to-save <strong>project.md</strong> and a prompt you can paste into Claude in VS Code so it jumps straight to the right folder.</p>
+  </header>
+
+  <div class="grid">
+    <form class="card" id="form" autocomplete="off">
+      <div class="field">
+        <label for="system">System name <span class="hint">which computer / phone</span></label>
+        <input id="system" placeholder="e.g. HP Laptop (Windows 11)">
+      </div>
+      <div class="field">
+        <label for="project">Project name</label>
+        <input id="project" placeholder="e.g. My App">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="version">Version</label>
+          <input id="version" placeholder="e.g. 1.2.0">
+        </div>
+        <div class="field">
+          <label for="status">Status <span class="hint">optional</span></label>
+          <input id="status" placeholder="e.g. In progress">
+        </div>
+      </div>
+      <div class="field">
+        <label for="location">Project location <span class="hint">full folder path</span></label>
+        <input id="location" placeholder="e.g. C:\Users\YourName\MyProject">
+      </div>
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" placeholder="One or two lines on what this project does."></textarea>
+      </div>
+      <div class="field">
+        <label for="info">Complete info <span class="hint">tech, setup, notes, to-dos</span></label>
+        <textarea id="info" style="min-height:130px" placeholder="Anything useful: tech stack, how to build/run, key files, known issues, next steps…"></textarea>
+      </div>
+    </form>
+
+    <section class="card out" aria-label="Generated output">
+      <div class="tabs" role="tablist">
+        <button class="tab" id="tab-md" role="tab" aria-selected="true" aria-controls="panel-md">project.md</button>
+        <button class="tab" id="tab-vs" role="tab" aria-selected="false" aria-controls="panel-vs">VS Code prompt</button>
+      </div>
+
+      <div class="panel" id="panel-md" role="tabpanel" aria-labelledby="tab-md">
+        <div class="panel-head">
+          <p>Save this as <b>project.md</b> inside the project folder.</p>
+          <button class="copy" data-target="md-pre">Copy</button>
+        </div>
+        <pre id="md-pre"></pre>
+      </div>
+
+      <div class="panel" id="panel-vs" role="tabpanel" aria-labelledby="tab-vs" hidden>
+        <div class="panel-head">
+          <p>Paste into Claude in VS Code — it finds the folder and can create project.md there.</p>
+          <button class="copy" data-target="vs-pre">Copy</button>
+        </div>
+        <pre id="vs-pre"></pre>
+      </div>
+    </section>
+  </div>
+
+  <p class="note">
+    <b>Tip:</b> On a phone, use the <b>VS Code prompt</b> tab — copy it and send it to yourself. Back on the computer, paste it into Claude and it will open the project at the path and create <code>project.md</code> for you. Your entries are saved in this browser, so the form remembers them next time.
+  </p>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const ids = ["system","project","version","status","location","description","info"];
+  const KEY = "projectRegistry.v1";
+
+  function val(id, fallback){ const v = $(id).value.trim(); return v || fallback; }
+
+  function buildMd(){
+    const project = val("project","Untitled Project");
+    const system = val("system","");
+    const version = val("version","");
+    const status = val("status","");
+    const location = val("location","");
+    const description = val("description","");
+    const info = val("info","");
+    const today = new Date().toISOString().slice(0,10);
+
+    let out = `# ${project}\n\n`;
+    out += `| Field | Value |\n|---|---|\n`;
+    out += `| System | ${system || "_(not set)_"} |\n`;
+    out += `| Version | ${version || "_(not set)_"} |\n`;
+    if (status) out += `| Status | ${status} |\n`;
+    out += `| Location | \`${location || "_(not set)_"}\` |\n`;
+    out += `| Last updated | ${today} |\n\n`;
+    out += `## Description\n\n${description || "_(add a description)_"}\n\n`;
+    out += `## Complete info\n\n${info || "_(add setup, tech stack, notes, next steps)_"}\n`;
+    return out;
+  }
+
+  function buildPrompt(){
+    const project = val("project","my project");
+    const system = val("system","");
+    const version = val("version","");
+    const status = val("status","");
+    const location = val("location","<paste the full folder path>");
+    const description = val("description","");
+    const info = val("info","");
+
+    let p = `I want to work on my project "${project}".\n\n`;
+    p += `Location on ${system || "this machine"}: ${location}\n`;
+    if (version) p += `Version: ${version}\n`;
+    if (status) p += `Status: ${status}\n`;
+    p += `\n`;
+    if (description) p += `What it is: ${description}\n\n`;
+    if (info) p += `Full context:\n${info}\n\n`;
+    p += `Please open the folder at the path above, read the project files to understand it, `;
+    p += `and help me with further modifications. If a project.md file does not exist there, `;
+    p += `create one summarising the details above.`;
+    return p;
+  }
+
+  function render(){
+    $("md-pre").textContent = buildMd();
+    $("vs-pre").textContent = buildPrompt();
+    const data = {}; ids.forEach(i => data[i] = $(i).value);
+    try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){}
+  }
+
+  // Restore saved values
+  try{
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    ids.forEach(i => { if (saved[i] != null) $(i).value = saved[i]; });
+  }catch(e){}
+
+  ids.forEach(i => $(i).addEventListener("input", render));
+
+  // Tabs
+  function selectTab(which){
+    const md = which === "md";
+    $("tab-md").setAttribute("aria-selected", md);
+    $("tab-vs").setAttribute("aria-selected", !md);
+    $("panel-md").hidden = !md;
+    $("panel-vs").hidden = md;
+  }
+  $("tab-md").addEventListener("click", () => selectTab("md"));
+  $("tab-vs").addEventListener("click", () => selectTab("vs"));
+
+  // Copy with fallback for sandboxed iframes
+  async function copyText(text){
+    try{ await navigator.clipboard.writeText(text); return true; }
+    catch(e){
+      try{
+        const ta = document.createElement("textarea");
+        ta.value = text; ta.style.position="fixed"; ta.style.opacity="0";
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        const ok = document.execCommand("copy"); ta.remove(); return ok;
+      }catch(err){ return false; }
+    }
+  }
+  document.querySelectorAll(".copy").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const ok = await copyText($(btn.dataset.target).textContent);
+      const orig = btn.textContent;
+      btn.textContent = ok ? "Copied ✓" : "Press Ctrl+C";
+      btn.classList.toggle("done", ok);
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove("done"); }, 1600);
+    });
+  });
+
+  render();
+</script>
