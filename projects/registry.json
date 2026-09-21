@@ -5,5 +5,12 @@
     "system": "HP Laptop (Windows 11)",
     "version": "1.0",
     "updated": "2026-09-21"
+  },
+  {
+    "id": "JWPCTT",
+    "name": "JWPCTT Goods Received",
+    "system": "Desktop PC (DESKTOP-OJP04VH, Windows 10 Pro)",
+    "version": "0.1.0",
+    "updated": "2026-09-21"
   }
 ]
